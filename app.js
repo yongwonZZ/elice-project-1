@@ -1,6 +1,6 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
 mongoose
   .connect(process.env.MONGODB_URL)
