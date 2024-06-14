@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema } = require('mongoose');
 
 // 사용자 스키마 정의
 const userSchema = new Schema({
@@ -23,4 +22,4 @@ const userSchema = new Schema({
 });
 
 // 스키마 내보내기
-module.exports = userSchema;
+export { userSchema };

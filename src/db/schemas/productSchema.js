@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema } = require('mongoose');
 
 // 제품 스키마 정의
 const productSchema = new Schema({
@@ -33,4 +32,4 @@ const productSchema = new Schema({
 });
 
 // 스키마 내보내기
-module.exports = productSchema;
+export { productSchema };

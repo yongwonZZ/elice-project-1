@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema } = require('mongoose');
 
 // 카테고리 스키마 정의
 const categorySchema = new Schema({
@@ -14,4 +13,4 @@ const categorySchema = new Schema({
 });
 
 // 스키마 내보내기
-module.exports = categorySchema;
+export { categorySchema };

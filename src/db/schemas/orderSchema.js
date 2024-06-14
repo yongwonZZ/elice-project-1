@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-const { Schema } = mongoose;
+const { Schema } = require('mongoose');
 
 // Order Schema 정의
 const orderSchema = new Schema({
@@ -46,4 +45,4 @@ const orderSchema = new Schema({
   },
 });
 
-export { orderSchema };
+module.exports = { orderSchema };
