@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const Order = require('../db/models');
+const Order = require('../schemas/orderSchema');
 const { notFoundError, databaseError } = require('../middlewares/errorHandler');
 
 // 전체 주문 목록 조회
