@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const{Schema} = mongoose;
 
 const productSchema = new Schema({
@@ -24,4 +25,6 @@ const productSchema = new Schema({
 });
 
 
-module.exports = productSchema;
+const Product = mongoose.model('Product', productSchema); // 모델 이름을 'Product'로 수정
+
+module.exports = Product;
