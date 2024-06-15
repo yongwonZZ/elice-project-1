@@ -22,4 +22,4 @@ const userSchema = new Schema({
 });
 
 // 스키마 내보내기
-export { userSchema };
+module.exports = { userSchema };

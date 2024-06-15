@@ -32,4 +32,4 @@ const productSchema = new Schema({
 });
 
 // 스키마 내보내기
-export { productSchema };
+module.exports = { productSchema };

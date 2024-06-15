@@ -13,4 +13,4 @@ const categorySchema = new Schema({
 });
 
 // 스키마 내보내기
-export { categorySchema };
+module.exports = { categorySchema };

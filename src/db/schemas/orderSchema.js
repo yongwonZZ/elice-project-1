@@ -26,7 +26,7 @@ const orderSchema = new Schema({
     type: Number,
     required: true,
   },
-  orderAddress: {
+  address: {
     type: String,
     required: true,
   },

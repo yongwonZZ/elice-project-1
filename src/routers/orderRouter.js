@@ -1,59 +1,24 @@
 const express = require('express');
-const { orderService } = require('./orderService');
-
+const {
+  getOrder,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+  updateStatus,
+  getOrderList,
+  getOrders,
+} = require('../services/orderService');
+const permission = require('../middlewares/permission');
 const router = express.Router();
 
-// 모든 주문 조회
-router.get('/', async (req, res) => {
-  try {
-    const orders = await orderService.getOrders();
-    res.status(200).json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.put('/admin/:id', permission('admin'), updateOrder); // 주문 수정
+router.delete('/admin/:id', permission('admin'), deleteOrder); // 주문 삭제
+router.patch('/admin/:id', permission('admin'), updateStatus); // 상태 수정
+router.get('/admin', permission('admin'), getOrderList); // 전체주문 조회
 
-// 특정 유저의 주문 조회
-router.get('/user/:userId', async (req, res) => {
-  const { userId } = req.params;
-  try {
-    const orders = await orderService.getOrder(userId);
-    res.status(200).json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// 주문 생성
-router.post('/', async (req, res) => {
-  try {
-    const newOrder = await orderService.addOrder(req.body);
-    res.status(201).json(newOrder);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// 주문 수정
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const updatedOrder = await orderService.setOrder(id, req.body);
-    res.status(200).json(updatedOrder);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// 주문 삭제
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    await orderService.deleteOrder(id);
-    res.status(204).end();
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.get('/', permission('user'), getOrders); // 주문 조회
+router.post('/', permission('user'), createOrder); // 주문 추가
+router.put('/:id', permission('user'), updateOrder); // 주문 수정
+router.get('/:id', permission('user'), getOrder); // 주문 상세
 
 module.exports = router;
