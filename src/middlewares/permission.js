@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
-const { User } = require('../db/models');
+const { User } = require('../db/schemas/userSchema');
 const secret = process.env.ACCESS_SECRET;
 
 // 토큰&권한 체크
