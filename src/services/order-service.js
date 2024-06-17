@@ -31,11 +31,12 @@ class OrderService {
   }
 
   //주문 수정
-  async updateOrder(orderId, update) {
+  async updateOrder(orderInfoRequired, toUpdate) {
+    const { orderId } = orderInfoRequired;
     const order = await this.orderModel.findById(orderId);
 
     if (order.deliveryStatus === '결제완료') {
-      order = await this.orderModel.update({ orderId, update });
+      order = await this.orderModel.update({ orderId, update: toUpdate });
       return order;
     } else {
       throw new Error('배송중인 주문은 수정할 수 없습니다.');
@@ -48,20 +49,21 @@ class OrderService {
     return orderList;
   }
 
-  //관리자용 주문 조회
+  //관리자 주문 조회
   async getOrderLists() {
     const orderLists = await this.orderModel.findAll();
     if (orderLists.length === 0) {
-      throw new Error('현재 들어온 주문이 없습니다.');
+      throw new Error('현재 주문이 없습니다.');
     }
     return orderLists;
   }
 
-  //관리자용 주문 수정
-  async updateOrderStatus(orderId, update) {
+  //관리자 주문 수정
+  async updateOrderStatus(orderInfoRequired, toUpdate) {
+    const { orderId } = orderInfoRequired;
     const updatedOrder = await this.orderModel.update({
       orderId,
-      update,
+      update: toUpdate,
     });
     return updatedOrder;
   }
