@@ -1,9 +1,15 @@
-import "dotenv/config";
-import { app } from "./src/app";
+const express = require("express");
+const connectDB = require("./db.js")
+const app = express();
+const port = 5001;
 
-// .env 파일에 예를 들어 PORT="3000" 을 작성하면, process.env.PORT가 3000이 됨
-const PORT = process.env.PORT || 5001;
+app.get("/", (req, res) => {
+    res.send("API RUNNING...");
+})
 
-app.listen(PORT, () => {
-  console.log(`정상적으로 서버를 시작하였습니다.  http://localhost:${PORT}`);
-});
+connectDB();
+
+app.listen(port, () => console.log(`Server started on port ${port}`));
+
+// allow us to get the data in request.body
+app.use(express.json({ extended: false })); 
