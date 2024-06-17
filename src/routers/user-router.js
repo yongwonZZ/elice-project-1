@@ -7,6 +7,7 @@ import { adminRequired } from "../middlewares/admin-required";
 
 const userRouter = Router();
 
+// me로 get요청이오면 미들웨어로 확인하고 프로필 정보 반환
 userRouter.get("/me", loginRequired, async (req, res, next) => {
   const user = await userService.getUserById(req.currentUserId);
   res.status(200).json(user);
@@ -133,5 +134,21 @@ userRouter.patch("/me", loginRequired, async function (req, res, next) {
     next(error);
   }
 });
+
+// 사용자 정보 삭제(탈퇴)
+userRouter.delete("/me", loginRequired, async function (req, res, next) {
+  try {
+    const userId = req.currentUserId;
+
+    // 사용자 삭제 서비스 호출
+    await userService.deleteUser(userId);
+
+    // 성공적으로 삭제되었음을 클라이언트에게 알림
+    res.status(204).send(); 
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 export { userRouter };

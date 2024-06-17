@@ -33,7 +33,7 @@ const UserSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin"], // 관리자랑 구별 짓기 위함
       required: false,
       default: "user",
     },

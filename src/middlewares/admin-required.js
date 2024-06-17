@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"; // 토큰용 라이브러리
 
 function adminRequired(req, res, next) {
   // request 헤더로부터 authorization bearer 토큰을 받음.
@@ -30,7 +30,7 @@ function adminRequired(req, res, next) {
         result: "forbidden-approach",
         reason: "어드민만 접근할 수 있습니다.",
       });
-
+      
       return;
     }
 

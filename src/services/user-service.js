@@ -14,8 +14,8 @@ class UserService {
     if (!user) {
       throw new Error("유저가 없습니다.");
     }
-    const { email, fullName } = user;
-    return { email, fullName };
+    const { email, fullName, phoneNumber, address } = user; // 수정: phoneNumber, address 추가
+    return { email, fullName, phoneNumber, address };
   }
 
   // 회원가입
