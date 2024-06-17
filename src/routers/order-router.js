@@ -6,4 +6,6 @@ import { adminRequired } from '../middlewares/admin-required';
 
 const orderRouter = Router();
 
+orderRouter.post;
+
 export { orderRouter };
