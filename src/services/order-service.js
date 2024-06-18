@@ -1,6 +1,6 @@
-import { orderModel } from '../db';
-// import { productModel } from '../db';
-// import { userModel } from '../db';
+import { orderModel } from '../db/index.js';
+// import { productModel } from '../db/index.js';
+// import { userModel } from '../db/index.js';
 
 class OrderService {
   constructor(orderModel) {

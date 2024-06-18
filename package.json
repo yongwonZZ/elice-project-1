@@ -9,7 +9,7 @@
     "start": "nodemon index.js --exec babel-node"
   },
   "dependencies": {
-    "@sindresorhus/is": "^6.3.1",
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

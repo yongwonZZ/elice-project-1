@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express from 'express';
-import { userRouter, orderRouter } from './routers';
-import { errorHandler } from './middlewares';
+import { userRouter, orderRouter } from './routers/index.js';
+import { errorHandler } from './middlewares/index.js';
 import morgan from 'morgan';
 
 const app = express();

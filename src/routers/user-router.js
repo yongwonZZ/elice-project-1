@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import Joi from 'joi';
-import { loginRequired } from '../middlewares';
-import { userService } from '../services';
-import { registerSchema, updateUserSchema } from './userValidation'; // Joi 스키마 파일 import
+import { loginRequired } from '../middlewares/index.js';
+import { userService } from '../services/index.js';
+import { registerSchema, updateUserSchema } from '../db/joi-schemas/index.js'; // Joi 스키마 파일 import
 
 const userRouter = Router();
 
@@ -83,7 +83,8 @@ userRouter.patch('/me', loginRequired, async (req, res, next) => {
     }
 
     const userId = req.currentUserId;
-    const { fullName, password, address, phoneNumber, currentPassword } = req.body;
+    const { fullName, password, address, phoneNumber, currentPassword } =
+      req.body;
 
     if (!currentPassword) {
       throw new Error('정보를 변경하려면 현재 비밀번호가 필요합니다.');
@@ -97,7 +98,10 @@ userRouter.patch('/me', loginRequired, async (req, res, next) => {
       ...(phoneNumber && { phoneNumber }),
     };
 
-    const updatedUserInfo = await userService.setUser(userInfoRequired, toUpdate);
+    const updatedUserInfo = await userService.setUser(
+      userInfoRequired,
+      toUpdate
+    );
 
     res.status(200).json(updatedUserInfo);
   } catch (error) {
