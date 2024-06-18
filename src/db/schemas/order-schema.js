@@ -11,7 +11,7 @@ const OrderSchema = new Schema({
     type: String,
     required: true,
   },
-  phone: {
+  phoneNumber: {
     type: String,
     required: true,
   },
@@ -39,7 +39,7 @@ const OrderSchema = new Schema({
     default: '결제완료', // 배송중, 배송완료
   },
   orderDate: {
-    type: String,
+    type: Date,
     default: Date.now,
   },
 });

@@ -13,7 +13,7 @@ const orderSchema = Joi.object({
     )
     .required(),
   receiver: Joi.string().required(),
-  phone: Joi.string().required(),
+  phoneNumber: Joi.string().required(),
   address: Joi.string().required(),
   deliveryStatus: Joi.string().default('결제완료'),
 });
@@ -21,7 +21,7 @@ const orderSchema = Joi.object({
 // 주문 수정 스키마
 const updateOrderSchema = Joi.object({
   receiver: Joi.string().optional(),
-  phone: Joi.string().optional(),
+  phoneNumber: Joi.string().optional(),
   address: Joi.string().optional(),
   deliveryStatus: Joi.string().optional(),
 });
