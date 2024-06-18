@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { loginRequired } from '../middlewares/login-required';
-import { adminRequired } from '../middlewares/admin-required';
-import { productService } from '../services/product-service';
+import { loginRequired } from '../middlewares/login-required.js';
+import { adminRequired } from '../middlewares/admin-required.js';
+import { productService } from '../services/product-service.js';
 import { productSchema, updateProductSchema } from '../db/joi-schemas/index.js'; // Joi 스키마 파일 import
 
 const productRouter = Router();

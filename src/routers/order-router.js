@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { loginRequired, adminOnly } from '../middlewares';
-import { orderService } from '../services';
-import { orderSchema, updateOrderSchema } from '../db/joi-schemas/orderSchema';
+import { loginRequired, adminRequired } from '../middlewares/index.js';
+import { orderService } from '../services/index.js';
+import { orderSchema, updateOrderSchema } from '../db/joi-schemas/index.js'; // Joi 스키마 파일 import
 
 const orderRouter = Router();
 
@@ -83,7 +83,7 @@ orderRouter.get('/orders/:uid', loginRequired, async (req, res, next) => {
 });
 
 // 관리자 상품 전체 조회
-orderRouter.get('/admin/orders/', adminOnly, async (req, res, next) => {
+orderRouter.get('/admin/orders/', adminRequired, async (req, res, next) => {
   try {
     const orderLists = await orderService.getOrderLists();
     res.status(200).json(orderLists);
@@ -93,39 +93,49 @@ orderRouter.get('/admin/orders/', adminOnly, async (req, res, next) => {
 });
 
 // 관리자의 주문 상태 변경 기능
-orderRouter.patch('/admin/orders/:oid', adminOnly, async (req, res, next) => {
-  try {
-    const { error } = updateOrderSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+orderRouter.patch(
+  '/admin/orders/:oid',
+  adminRequired,
+  async (req, res, next) => {
+    try {
+      const { error } = updateOrderSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+
+      const orderId = req.params.oid;
+      const { deliveryStatus } = req.body;
+
+      const orderInfoRequired = { orderId };
+      const toUpdate = {};
+      if (deliveryStatus) toUpdate.deliveryStatus = deliveryStatus;
+
+      const statusUpdatedOrder = await orderService.updateOrderStatus(
+        orderInfoRequired,
+        toUpdate
+      );
+      res.status(200).json(statusUpdatedOrder);
+    } catch (error) {
+      next(error);
     }
-
-    const orderId = req.params.oid;
-    const { deliveryStatus } = req.body;
-
-    const orderInfoRequired = { orderId };
-    const toUpdate = {};
-    if (deliveryStatus) toUpdate.deliveryStatus = deliveryStatus;
-
-    const statusUpdatedOrder = await orderService.updateOrderStatus(
-      orderInfoRequired,
-      toUpdate
-    );
-    res.status(200).json(statusUpdatedOrder);
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // 관리자의 주문 삭제 기능
-orderRouter.delete('/admin/orders/:oid', adminOnly, async (req, res, next) => {
-  try {
-    const orderId = req.params.oid;
-    const deletedOrderInfo = await orderService.deleteOrder(orderId);
-    res.status(200).json({ message: '주문 삭제 성공', data: deletedOrderInfo });
-  } catch (error) {
-    next(error);
+orderRouter.delete(
+  '/admin/orders/:oid',
+  adminRequired,
+  async (req, res, next) => {
+    try {
+      const orderId = req.params.oid;
+      const deletedOrderInfo = await orderService.deleteOrder(orderId);
+      res
+        .status(200)
+        .json({ message: '주문 삭제 성공', data: deletedOrderInfo });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 export { orderRouter };

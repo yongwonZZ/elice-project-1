@@ -1,7 +1,7 @@
-import { model } from "mongoose";
-import { UserSchema } from "../schemas/user-schema";
+import { model } from 'mongoose';
+import { UserSchema } from '../schemas/user-schema.js';
 
-const User = model("users", UserSchema); // model함수(스키마이름(복수), 스키마객체)
+const User = model('users', UserSchema); // model함수(스키마이름(복수), 스키마객체)
 
 export class UserModel {
   // 이메일로 사용자 찾기

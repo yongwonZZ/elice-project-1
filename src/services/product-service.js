@@ -1,4 +1,4 @@
-  import { productModel } from '../models/product-model';
+  import { productModel } from '../db/index.js';
 
   class ProductService {
     constructor(productModel) {

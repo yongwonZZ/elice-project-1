@@ -1,5 +1,5 @@
 import { model } from 'mongoose';
-import { Product } from '../schemas/product-schema';
+import { ProductSchema } from '../schemas/product-schema.js';
 
 const Product = model('Product', ProductSchema);
 
@@ -34,7 +34,11 @@ class ProductModel {
     const filter = { _id: productId }; // 수정할 제품 찾는 필터
     const option = { returnOriginal: false }; // 수정된 문서 반환
 
-    const updatedProduct = await Product.findOneAndUpdate(filter, update, option); // 제품을 수정
+    const updatedProduct = await Product.findOneAndUpdate(
+      filter,
+      update,
+      option
+    ); // 제품을 수정
     return updatedProduct;
   }
 

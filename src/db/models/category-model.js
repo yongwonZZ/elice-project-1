@@ -1,5 +1,5 @@
 import { model } from 'mongoose';
-import { CategorySchema } from '../schemas/category-schema';
+import { CategorySchema } from '../schemas/category-schema.js';
 
 const Category = model('Category', CategorySchema); // Category 모델을 정의
 

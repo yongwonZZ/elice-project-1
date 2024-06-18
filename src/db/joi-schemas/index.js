@@ -1,5 +1,14 @@
-import userJoiSchema from './userJoi';
-import orderJoiSchema from './orderJoi';
-import productsJoiSchema from './productsJoi';
+import { registerSchema, updateUserSchema } from './user-joi.js';
+import { orderSchema, updateOrderSchema } from './order-joi.js';
+import { productSchema, updateProductSchema, categorySchema, updateCategorySchema } from './product-joi.js';
 
-export { userJoiSchema, orderJoiSchema, productsJoiSchema };
+export {
+    registerSchema,
+    updateUserSchema,
+    orderSchema,
+    updateOrderSchema,
+    productSchema,
+    updateProductSchema,
+    categorySchema,
+    updateCategorySchema
+        };

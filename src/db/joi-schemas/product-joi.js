@@ -3,7 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Product Joi 스키마
 const productSchema = Joi.object({
-  id: Joi.string().default(() => uuidv4()).required(),
+  id: Joi.string()
+    .default(() => uuidv4())
+    .required(),
   name: Joi.string().required(),
   price: Joi.number().required(),
   description: Joi.string().required(),
@@ -21,15 +23,14 @@ const updateProductSchema = Joi.object({
 });
 
 //category Joi 스키마
-const CategoryJoiSchema = Joi.object({
+const categorySchema = Joi.object({
   id: Joi.string()
     .guid({ version: ['uuidv4'] }) // UUID v4 형식으로 설정
-    .default(() => uuidv4(), 'UUID v4 default value')
+    .default(() => uuidv4())
     .required(),
-  
-  name: Joi.string()
-    .required(),
-  
+
+  name: Joi.string().required(),
+
   products: Joi.array()
     .items(Joi.string().regex(/^[0-9a-fA-F]{24}$/)) // MongoDB ObjectId 형식 검증
     .optional(), // 제품이 없는 카테고리도 존재할 수 있으므로 optional로 설정
@@ -38,8 +39,14 @@ const CategoryJoiSchema = Joi.object({
 // Category 수정 Joi 스키마
 const updateCategorySchema = Joi.object({
   name: Joi.string().required(),
-  products: Joi.array().items(Joi.string().regex(/^[0-9a-fA-F]{24}$/)).optional(),
+  products: Joi.array()
+    .items(Joi.string().regex(/^[0-9a-fA-F]{24}$/))
+    .optional(),
 });
 
-
-export { productSchema, updateProductSchema, CategoryJoiSchema , updateCategorySchema };
+export {
+  productSchema,
+  updateProductSchema,
+  categorySchema,
+  updateCategorySchema,
+};
