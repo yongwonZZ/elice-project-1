@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Joi from 'joi';
 import { loginRequired } from '../middlewares/index.js';
 import { userService } from '../services/index.js';
-import { registerSchema, updateUserSchema } from '../db/joi-schemas/index.js'; // Joi 스키마 파일 import
+import { registerSchema, updateUserSchema, loginSchema } from '../db/joi-schemas/index.js'; // Joi 스키마 파일 import
 
 const userRouter = Router();
 
@@ -43,11 +43,7 @@ userRouter.post('/register', async (req, res, next) => {
 // 로그인 API
 userRouter.post('/login', async (req, res, next) => {
   try {
-    const { error } = Joi.object({
-      email: Joi.string().email().required(),
-      password: Joi.string().required(),
-    }).validate(req.body);
-
+    const { error } = loginSchema.validate(req.body);
     if (error) {
       throw new Error(error.details[0].message);
     }

@@ -17,3 +17,9 @@ export const updateUserSchema = Joi.object({
   phoneNumber: Joi.string(),
   currentPassword: Joi.string().required(),
 });
+
+// 로그인 요청 스키마
+export const loginSchema = Joi.object({
+  email: Joi.string(),
+  password: Joi.string(),
+});
