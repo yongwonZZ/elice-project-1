@@ -2,11 +2,15 @@ import cors from 'cors';
 import express from 'express';
 import { userRouter, orderRouter } from './routers';
 import { errorHandler } from './middlewares';
+import morgan from 'morgan';
 
 const app = express();
 
 // CORS 에러 방지
 app.use(cors());
+
+//morgan dev사용
+app.use(morgan('dev'));
 
 // Content-Type: application/json 형태의 데이터를 인식하고 핸들링할 수 있게 함.
 app.use(express.json());

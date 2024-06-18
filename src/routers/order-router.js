@@ -1,17 +1,16 @@
 import { Router } from 'express';
-import is from '@sindresorhus/is';
 import { loginRequired, adminOnly } from '../middlewares';
 import { orderService } from '../services';
+import { orderSchema, updateOrderSchema } from '../db/joi-schemas/orderSchema';
 
 const orderRouter = Router();
 
-//주문 생성
+// 주문 생성
 orderRouter.post('/new-order', loginRequired, async (req, res, next) => {
   try {
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        'headers의 Content-Type을 application/json으로 설정해주세요'
-      );
+    const { error } = orderSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
     }
 
     const { userId, productList, receiver, phone, address, deliveryStatus } =
@@ -32,24 +31,23 @@ orderRouter.post('/new-order', loginRequired, async (req, res, next) => {
   }
 });
 
-//주문 수정
+// 주문 수정
 orderRouter.patch('/orders/:oid', loginRequired, async (req, res, next) => {
   try {
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        'headers의 Content-Type을 application/json으로 설정해주세요'
-      );
+    const { error } = updateOrderSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
     }
 
     const orderId = req.params.oid;
-    const { receiver, phone, address } = req.body;
+    const { receiver, phone, address, deliveryStatus } = req.body;
     const orderInfoRequired = { orderId };
 
     const toUpdate = {};
-
     if (receiver) toUpdate.receiver = receiver;
     if (phone) toUpdate.phone = phone;
     if (address) toUpdate.address = address;
+    if (deliveryStatus) toUpdate.deliveryStatus = deliveryStatus;
 
     const updatedUserInfo = await orderService.updateOrderInfo(
       orderInfoRequired,
@@ -62,7 +60,7 @@ orderRouter.patch('/orders/:oid', loginRequired, async (req, res, next) => {
   }
 });
 
-//주문 삭제
+// 주문 삭제
 orderRouter.delete('/orders', loginRequired, async (req, res, next) => {
   try {
     const orderId = req.query.oid;
@@ -73,7 +71,7 @@ orderRouter.delete('/orders', loginRequired, async (req, res, next) => {
   }
 });
 
-//전체 주문 리스트
+// 전체 주문 리스트
 orderRouter.get('/orders/:uid', loginRequired, async (req, res, next) => {
   try {
     const userId = req.params.uid;
@@ -84,7 +82,7 @@ orderRouter.get('/orders/:uid', loginRequired, async (req, res, next) => {
   }
 });
 
-//관리자 상품 전체 조회
+// 관리자 상품 전체 조회
 orderRouter.get('/admin/orders/', adminOnly, async (req, res, next) => {
   try {
     const orderLists = await orderService.getOrderLists();
@@ -94,15 +92,19 @@ orderRouter.get('/admin/orders/', adminOnly, async (req, res, next) => {
   }
 });
 
-//관리자의 주문 상태 변경 기능
+// 관리자의 주문 상태 변경 기능
 orderRouter.patch('/admin/orders/:oid', adminOnly, async (req, res, next) => {
   try {
+    const { error } = updateOrderSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
     const orderId = req.params.oid;
     const { deliveryStatus } = req.body;
 
     const orderInfoRequired = { orderId };
     const toUpdate = {};
-
     if (deliveryStatus) toUpdate.deliveryStatus = deliveryStatus;
 
     const statusUpdatedOrder = await orderService.updateOrderStatus(
@@ -115,7 +117,7 @@ orderRouter.patch('/admin/orders/:oid', adminOnly, async (req, res, next) => {
   }
 });
 
-//관리자의 주문 삭제 기능
+// 관리자의 주문 삭제 기능
 orderRouter.delete('/admin/orders/:oid', adminOnly, async (req, res, next) => {
   try {
     const orderId = req.params.oid;
