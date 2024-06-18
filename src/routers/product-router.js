@@ -1,64 +1,84 @@
 import { Router } from 'express';
 import { loginRequired } from '../middlewares/login-required';
 import { adminRequired } from '../middlewares/admin-required';
-import { productModel } from '../models/product-model';
+import { productService } from '../services/product-service';
+import { productSchema, updateProductSchema } from '../db/joi-schemas/index.js'; // Joi 스키마 파일 import
 
 const productRouter = Router();
 
-// 모든 제품 조회 (일반 사용자도 가능)
-productRouter.get('/products', async (req, res, next) => {
+// 제품 생성
+productRouter.post('/new-product', adminRequired, async (req, res, next) => {
   try {
-    const products = await productModel.findAll();
-    res.status(200).json(products);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// ID로 제품 조회 (일반 사용자도 가능)
-productRouter.get('/products/:id', async (req, res, next) => {
-  try {
-    const product = await productModel.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ success: false, message: '제품을 찾을 수 없습니다.' });
+    const { error } = productSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
     }
-    res.status(200).json(product);
+
+    const { name, category, price, description, stock } = req.body;
+    const newProduct = await productService.addProduct({
+      name,
+      category,
+      price,
+      description,
+      stock,
+    });
+    res.status(201).json(newProduct);
   } catch (error) {
     next(error);
   }
 });
 
-// 제품 생성 (관리자 전용)
-productRouter.post('/products', loginRequired, adminRequired, async (req, res, next) => {
+// 제품 수정
+productRouter.patch('/products/:pid', adminRequired, async (req, res, next) => {
   try {
-    const createdProduct = await productModel.create(req.body);
-    res.status(201).json(createdProduct);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// 제품 수정 (관리자 전용)
-productRouter.put('/products/:id', loginRequired, adminRequired, async (req, res, next) => {
-  try {
-    const updatedProduct = await productModel.update({ productId: req.params.id, update: req.body });
-    if (!updatedProduct) {
-      return res.status(404).json({ success: false, message: '제품을 찾을 수 없습니다.' });
+    const { error } = updateProductSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
     }
+
+    const productId = req.params.pid;
+    const { name, category, price, description, stock } = req.body;
+    const toUpdate = {};
+    if (name) toUpdate.name = name;
+    if (category) toUpdate.category = category;
+    if (price) toUpdate.price = price;
+    if (description) toUpdate.description = description;
+    if (stock) toUpdate.stock = stock;
+
+    const updatedProduct = await productService.updateProduct(productId, toUpdate);
     res.status(200).json(updatedProduct);
   } catch (error) {
     next(error);
   }
 });
 
-// 제품 삭제 (관리자 전용)
-productRouter.delete('/products/:id', loginRequired, adminRequired, async (req, res, next) => {
+// 제품 삭제
+productRouter.delete('/products/:pid', adminRequired, async (req, res, next) => {
   try {
-    const deletedProduct = await productModel.delete(req.params.id);
-    if (!deletedProduct) {
-      return res.status(404).json({ success: false, message: '제품을 찾을 수 없습니다.' });
-    }
-    res.status(200).json(deletedProduct);
+    const productId = req.params.pid;
+    const deletedProduct = await productService.deleteProduct(productId);
+    res.status(200).json({ message: '제품 삭제 성공', data: deletedProduct });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 모든 제품 조회
+productRouter.get('/products', async (req, res, next) => {
+  try {
+    const products = await productService.getAllProducts();
+    res.status(200).json(products);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 특정 제품 조회
+productRouter.get('/products/:pid', async (req, res, next) => {
+  try {
+    const productId = req.params.pid;
+    const product = await productService.getProductById(productId);
+    res.status(200).json(product);
   } catch (error) {
     next(error);
   }

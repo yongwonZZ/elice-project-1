@@ -4,10 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 // Product 스키마 정의
 const ProductSchema = new Schema({
   
-    writer: {
-      type: Schema.Types.ObjectId,
-      ref: "User",//User 모델 참조
-    }, //---------------------------------writer가 꼭 필요할까요?
 
   id: {
     type: String,
