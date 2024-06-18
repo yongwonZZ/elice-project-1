@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 // 회원가입 요청 스키마
-export const registerSchema = Joi.object({
+const registerSchema = Joi.object({
   fullName: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
@@ -10,7 +10,7 @@ export const registerSchema = Joi.object({
 });
 
 // 사용자 정보 업데이트 요청 스키마
-export const updateUserSchema = Joi.object({
+const updateUserSchema = Joi.object({
   fullName: Joi.string(),
   password: Joi.string(),
   address: Joi.string(),
@@ -19,7 +19,9 @@ export const updateUserSchema = Joi.object({
 });
 
 // 로그인 요청 스키마
-export const loginSchema = Joi.object({
+const loginSchema = Joi.object({
   email: Joi.string(),
   password: Joi.string(),
 });
+
+export { registerSchema, updateUserSchema, loginSchema };
