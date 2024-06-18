@@ -1,12 +1,7 @@
 import { orderModel } from '../db/index.js';
-// import { productModel } from '../db/index.js';
-// import { userModel } from '../db/index.js';
-
 class OrderService {
   constructor(orderModel) {
     this.orderModel = orderModel;
-    // this.productModel = productModel;
-    // this.userModel = userModel;
   }
 
   // 주문 생성 (주문이 생성되지 않으면 에러 반환)
