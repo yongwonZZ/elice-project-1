@@ -1,26 +1,29 @@
 import { Router } from 'express';
 import { loginRequired, adminRequired } from '../middlewares/index.js';
 import { orderService } from '../services/index.js';
-import { orderSchema, updateOrderSchema } from '../db/joi-schemas/index.js'; // Joi 스키마 파일 import
+import { orderSchema, updateOrderSchema } from '../db/joi-schemas/index.js';
 
 const orderRouter = Router();
 
 // 주문 생성
 orderRouter.post('/new-order', loginRequired, async (req, res, next) => {
   try {
-    const { error } = orderSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
+    await orderSchema.validateAsync(req.body);
 
-    const { userId, productList, receiver, phone, address, deliveryStatus } =
-      req.body;
-    const date = new Date(); // 현재 시간 사용
-    const newOrder = await orderService.addOrder({
+    const {
       userId,
       productList,
       receiver,
-      phone,
+      phoneNumber,
+      address,
+      deliveryStatus,
+    } = req.body;
+    const date = new Date(); // 현재 시간 사용
+    const newOrder = await orderService.createOrder({
+      userId,
+      productList,
+      receiver,
+      phoneNumber,
       address,
       deliveryStatus, // default '결제완료'
       createdDate: date,
@@ -34,22 +37,19 @@ orderRouter.post('/new-order', loginRequired, async (req, res, next) => {
 // 주문 수정
 orderRouter.patch('/orders/:oid', loginRequired, async (req, res, next) => {
   try {
-    const { error } = updateOrderSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
+    await updateOrderSchema.validateAsync(req.body);
 
     const orderId = req.params.oid;
-    const { receiver, phone, address, deliveryStatus } = req.body;
+    const { receiver, phoneNumber, address, deliveryStatus } = req.body;
     const orderInfoRequired = { orderId };
 
     const toUpdate = {};
     if (receiver) toUpdate.receiver = receiver;
-    if (phone) toUpdate.phone = phone;
+    if (phoneNumber) toUpdate.phoneNumber = phoneNumber;
     if (address) toUpdate.address = address;
     if (deliveryStatus) toUpdate.deliveryStatus = deliveryStatus;
 
-    const updatedUserInfo = await orderService.updateOrderInfo(
+    const updatedUserInfo = await orderService.updateOrder(
       orderInfoRequired,
       toUpdate
     );
@@ -98,10 +98,7 @@ orderRouter.patch(
   adminRequired,
   async (req, res, next) => {
     try {
-      const { error } = updateOrderSchema.validate(req.body);
-      if (error) {
-        return res.status(400).json({ message: error.details[0].message });
-      }
+      await updateOrderSchema.validateAsync(req.body);
 
       const orderId = req.params.oid;
       const { deliveryStatus } = req.body;
