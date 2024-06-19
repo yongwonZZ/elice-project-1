@@ -35,7 +35,7 @@ orderRouter.post('/new-order', loginRequired, async (req, res, next) => {
 });
 
 // 주문 수정
-orderRouter.patch('/orders/:oid', loginRequired, async (req, res, next) => {
+orderRouter.patch('/:oid', loginRequired, async (req, res, next) => {
   try {
     await updateOrderSchema.validateAsync(req.body);
 
@@ -61,7 +61,7 @@ orderRouter.patch('/orders/:oid', loginRequired, async (req, res, next) => {
 });
 
 // 주문 삭제
-orderRouter.delete('/orders', loginRequired, async (req, res, next) => {
+orderRouter.delete('/', loginRequired, async (req, res, next) => {
   try {
     const orderId = req.query.oid;
     const deletedOrderInfo = await orderService.deleteOrder(orderId);
@@ -72,11 +72,15 @@ orderRouter.delete('/orders', loginRequired, async (req, res, next) => {
 });
 
 // 전체 주문 리스트 (페이지네이션 적용)
-orderRouter.get('/orders/:uid', loginRequired, async (req, res, next) => {
+orderRouter.get('/:uid', loginRequired, async (req, res, next) => {
   try {
     const userId = req.params.uid;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+
+    console.log(
+      `Fetching orders for user ${userId}, page: ${page}, limit: ${limit}`
+    );
     const orderListByUserId = await orderService.getOrderListByUserId(
       userId,
       page,
@@ -84,12 +88,13 @@ orderRouter.get('/orders/:uid', loginRequired, async (req, res, next) => {
     );
     res.status(200).json(orderListByUserId);
   } catch (error) {
+    console.error(`${error.message}`);
     next(error);
   }
 });
 
 // 관리자 상품 전체 조회 (페이지네이션 적용)
-orderRouter.get('/admin/orders/', adminRequired, async (req, res, next) => {
+orderRouter.get('/admin', adminRequired, async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -101,46 +106,36 @@ orderRouter.get('/admin/orders/', adminRequired, async (req, res, next) => {
 });
 
 // 관리자의 주문 상태 변경 기능
-orderRouter.patch(
-  '/admin/orders/:oid',
-  adminRequired,
-  async (req, res, next) => {
-    try {
-      await updateOrderSchema.validateAsync(req.body);
+orderRouter.patch('/admin/:oid', adminRequired, async (req, res, next) => {
+  try {
+    await updateOrderSchema.validateAsync(req.body);
 
-      const orderId = req.params.oid;
-      const { deliveryStatus } = req.body;
+    const orderId = req.params.oid;
+    const { deliveryStatus } = req.body;
 
-      const orderInfoRequired = { orderId };
-      const toUpdate = {};
-      if (deliveryStatus) toUpdate.deliveryStatus = deliveryStatus;
+    const orderInfoRequired = { orderId };
+    const toUpdate = {};
+    if (deliveryStatus) toUpdate.deliveryStatus = deliveryStatus;
 
-      const statusUpdatedOrder = await orderService.updateOrderStatus(
-        orderInfoRequired,
-        toUpdate
-      );
-      res.status(200).json(statusUpdatedOrder);
-    } catch (error) {
-      next(error);
-    }
+    const statusUpdatedOrder = await orderService.updateOrderStatus(
+      orderInfoRequired,
+      toUpdate
+    );
+    res.status(200).json(statusUpdatedOrder);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 // 관리자의 주문 삭제 기능
-orderRouter.delete(
-  '/admin/orders/:oid',
-  adminRequired,
-  async (req, res, next) => {
-    try {
-      const orderId = req.params.oid;
-      const deletedOrderInfo = await orderService.deleteOrder(orderId);
-      res
-        .status(200)
-        .json({ message: '주문 삭제 성공', data: deletedOrderInfo });
-    } catch (error) {
-      next(error);
-    }
+orderRouter.delete('/admin/:oid', adminRequired, async (req, res, next) => {
+  try {
+    const orderId = req.params.oid;
+    const deletedOrderInfo = await orderService.deleteOrder(orderId);
+    res.status(200).json({ message: '주문 삭제 성공', data: deletedOrderInfo });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 export { orderRouter };
