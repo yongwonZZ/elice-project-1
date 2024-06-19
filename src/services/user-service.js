@@ -137,6 +137,17 @@ class UserService {
 
     return { email, fullName };
   }
+  
+  // 사용자 삭제
+  async deleteUser(userId) {
+    let user = await this.userModel.findById(userId);
+
+    if (!user) {
+      throw new Error('해당 ID의 사용자를 찾을 수 없습니다.');
+    }
+
+    await deleteById(userId);
+  }
 }
 
 const userService = new UserService(userModel);
