@@ -139,20 +139,12 @@ class UserService {
   }
 
   // 사용자 삭제
-  async deleteUser(userId) {
-    // 데이터베이스에서 사용자 찾기
-    let user = await this.userModel.findById(userId);
-  
-    // 사용자가 없는 경우 에러 처리
-    if (!user) {
-      throw new Error('해당 ID의 사용자를 찾을 수 없습니다.');
-    }
-  
-    // 사용자 삭제
-    await this.userModel.findByIdAndDelete(userId);
-  
-    // 삭제된 사용자 정보 반환 (예를 들어, 삭제된 이메일과 풀네임)
-    return { email: user.email, fullName: user.fullName };
+async deleteUser(userId) {
+  const deletedUser = await this.userModel.deleteUser(userId);
+  if (!deletedUser) {
+    throw new Error('해당 ID의 사용자를 찾을 수 없습니다.');
+  }
+  return deletedUser;
   }
 }
 
