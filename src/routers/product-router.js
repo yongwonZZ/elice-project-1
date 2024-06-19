@@ -29,7 +29,7 @@ productRouter.post('/new-product', adminRequired, async (req, res, next) => {
 });
 
 // 제품 수정
-productRouter.patch('/products/:pid', adminRequired, async (req, res, next) => {
+productRouter.patch('/:pid', adminRequired, async (req, res, next) => {
   try {
     const { error } = updateProductSchema.validate(req.body);
     if (error) {
@@ -45,7 +45,10 @@ productRouter.patch('/products/:pid', adminRequired, async (req, res, next) => {
     if (description) toUpdate.description = description;
     if (stock) toUpdate.stock = stock;
 
-    const updatedProduct = await productService.updateProduct(productId, toUpdate);
+    const updatedProduct = await productService.updateProduct(
+      productId,
+      toUpdate
+    );
     res.status(200).json(updatedProduct);
   } catch (error) {
     next(error);
@@ -53,7 +56,7 @@ productRouter.patch('/products/:pid', adminRequired, async (req, res, next) => {
 });
 
 // 제품 삭제
-productRouter.delete('/products/:pid', adminRequired, async (req, res, next) => {
+productRouter.delete('/:pid', adminRequired, async (req, res, next) => {
   try {
     const productId = req.params.pid;
     const deletedProduct = await productService.deleteProduct(productId);
@@ -64,7 +67,7 @@ productRouter.delete('/products/:pid', adminRequired, async (req, res, next) => 
 });
 
 // 모든 제품 조회
-productRouter.get('/products', async (req, res, next) => {
+productRouter.get('/', async (req, res, next) => {
   try {
     const products = await productService.getAllProducts();
     res.status(200).json(products);
@@ -74,7 +77,7 @@ productRouter.get('/products', async (req, res, next) => {
 });
 
 // 특정 제품 조회
-productRouter.get('/products/:pid', async (req, res, next) => {
+productRouter.get('/:pid', async (req, res, next) => {
   try {
     const productId = req.params.pid;
     const product = await productService.getProductById(productId);
