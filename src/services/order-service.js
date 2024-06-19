@@ -1,12 +1,8 @@
 import { orderModel } from '../db/index.js';
-// import { productModel } from '../db/index.js';
-// import { userModel } from '../db/index.js';
 
 class OrderService {
   constructor(orderModel) {
     this.orderModel = orderModel;
-    // this.productModel = productModel;
-    // this.userModel = userModel;
   }
 
   // 주문 생성 (주문이 생성되지 않으면 에러 반환)
@@ -54,15 +50,19 @@ class OrderService {
   }
 
   // 주문 조회 (주문이 없으면 빈 배열 반환)
-  async getOrderListByUserId(userId) {
-    const orderList = await this.orderModel.findByUserId(userId);
-    return orderList;
+  async getOrderListByUserId(userId, page, limit) {
+    const skip = (page - 1) * limit;
+    const orders = await Order.find({ userId }).skip(skip).limit(limit);
+    const totalOrders = await Order.countDocuments({ userId });
+    return { orders, totalOrders, totalPages: Math.ceil(totalOrders / limit) };
   }
 
   // 관리자 주문 조회 (주문이 없으면 빈 배열 반환)
-  async getOrderLists() {
-    const orderLists = await this.orderModel.findAll();
-    return orderLists;
+  async getOrderLists(page, limit) {
+    const skip = (page - 1) * limit;
+    const orders = await Order.find().skip(skip).limit(limit);
+    const totalOrders = await Order.countDocuments();
+    return { orders, totalOrders, totalPages: Math.ceil(totalOrders / limit) };
   }
 
   // 관리자 주문 수정 (주문을 찾고 주문이 없으면 에러 반환)

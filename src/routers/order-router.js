@@ -71,21 +71,29 @@ orderRouter.delete('/orders', loginRequired, async (req, res, next) => {
   }
 });
 
-// 전체 주문 리스트
+// 전체 주문 리스트 (페이지네이션 적용)
 orderRouter.get('/orders/:uid', loginRequired, async (req, res, next) => {
   try {
     const userId = req.params.uid;
-    const orderListByUserId = await orderService.getOrderListByUserId(userId);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const orderListByUserId = await orderService.getOrderListByUserId(
+      userId,
+      page,
+      limit
+    );
     res.status(200).json(orderListByUserId);
   } catch (error) {
     next(error);
   }
 });
 
-// 관리자 상품 전체 조회
+// 관리자 상품 전체 조회 (페이지네이션 적용)
 orderRouter.get('/admin/orders/', adminRequired, async (req, res, next) => {
   try {
-    const orderLists = await orderService.getOrderLists();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const orderLists = await orderService.getOrderLists(page, limit);
     res.status(200).json(orderLists);
   } catch (error) {
     next(error);
