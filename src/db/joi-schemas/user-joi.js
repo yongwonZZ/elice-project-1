@@ -15,7 +15,7 @@ const updateUserSchema = Joi.object({
   password: Joi.string(),
   address: Joi.string(),
   phoneNumber: Joi.string(),
-  currentPassword: Joi.string().required(),
+  currentPassword: Joi.string().required()
 });
 
 // 로그인 요청 스키마
