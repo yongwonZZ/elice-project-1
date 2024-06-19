@@ -36,6 +36,15 @@ export class UserModel {
     const updatedUser = await User.findOneAndUpdate(filter, update, option);
     return updatedUser;
   }
+
+  // 사용자 삭제
+  async deleteUser(userId) {
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      throw new Error('해당 ID의 사용자를 찾을 수 없습니다.');
+    }
+    return deletedUser;
+  }
 }
 
 const userModel = new UserModel();
