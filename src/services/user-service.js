@@ -61,10 +61,21 @@ class UserService {
   }
 
   async getUsers({ page, perPage }) {
-    const users = await this.userModel.find({})
-      .skip((page - 1) * perPage)
-      .limit(perPage);
-    return users;
+    try {
+      const skip = (page - 1) * perPage;
+      const users = await this.userModel.findAll({})
+        .skip(skip)
+        .limit(perPage);
+      
+      const totalUsers = await this.userModel.countDocuments({});
+      return {
+        users,
+        totalUsers,
+        totalPages: Math.ceil(totalUsers / perPage),
+      };
+    } catch (error) {
+      throw new Error(`사용자 목록 조회 중 오류가 발생했습니다: ${error.message}`);
+    }
   }
 
   async countUsers() {
