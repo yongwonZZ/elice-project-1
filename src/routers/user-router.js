@@ -116,7 +116,7 @@ userRouter.patch('/me', loginRequired, async (req, res, next) => {
 });
 
 // 사용자 정보 삭제(탈퇴) API
-userRouter.delete('/me', loginRequired, async (req, res, next) => {
+userRouter.delete('/me/:userId', loginRequired, async (req, res, next) => {
   try {
     const userId = req.currentUserId;
     await userService.deleteUser(userId);
