@@ -62,10 +62,7 @@ class UserService {
 
   async getUsers({ page, perPage }) {
     try {
-      const skip = (page - 1) * perPage;
-      const users = await this.userModel.findAll({})
-        .skip(skip)
-        .limit(perPage);
+      const users = await this.userModel.findAll({ page, limit: perPage });
       
       const totalUsers = await this.userModel.countDocuments({});
       return {

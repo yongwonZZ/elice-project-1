@@ -23,17 +23,17 @@ export class UserModel {
   }
 
   // 모든 사용자 찾기
-  async findAll({ offset = 0, limit = 10 } = {}) {
-    try {
-        const users = await this.userModel.findAll({
-            offset: offset,
-            limit: limit,
-        });
-        return { result: "success", users };
-    } catch (error) {
-        return { result: "error", reason: `사용자 목록 조회 중 오류가 발생했습니다: ${error.message}` };
-    }
-}
+  async findAll({ page = 1, limit = 10 } = {}) {
+    const skip = (page - 1) * limit;
+    const users = await User.find().skip(skip).limit(limit);
+    return users;
+  }
+
+  // 사용자 수 세기
+  async countDocuments() {
+    const count = await User.countDocuments();
+    return count;
+  }
 
   // 해당 사용자 업데이트 하기
   async update({ userId, update }) {
