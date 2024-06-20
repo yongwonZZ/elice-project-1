@@ -17,7 +17,7 @@ class UserService {
   }
 
   async addUser(userInfo) {
-    const { email, fullName, password } = userInfo;
+    const { email, fullName, password, phoneNumber, address } = userInfo;
 
     const user = await this.userModel.findByEmail(email);
     if (user) {
@@ -27,7 +27,7 @@ class UserService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUserInfo = { fullName, email, password: hashedPassword };
+    const newUserInfo = { fullName, email, phoneNumber, address, password: hashedPassword };
     const createdNewUser = await this.userModel.create(newUserInfo);
 
     return createdNewUser;
