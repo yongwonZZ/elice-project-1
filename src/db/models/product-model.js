@@ -5,7 +5,7 @@ const Product = model('Product', ProductSchema);
 
 
 class ProductModel {
-  async findAll({ skip = 0, limit = 10 } = {}) {
+  async findAll({ skip = 0, limit = 30 } = {}) {
     const products = await Product.find({}).skip(skip).limit(limit).exec();
     return products;
   }

@@ -73,8 +73,8 @@ productRouter.delete('/:pid', adminRequired, async (req, res, next) => {
 
 // 모든 제품 조회 (페이지네이션 추가)
 productRouter.get('/', async (req, res, next) => {
-  const page = parseInt(req.query.page, 10) || 1;  // <-- 기본값 설정과 10진수 변환
-  const limit = parseInt(req.query.limit, 10) || 10;  // <-- 기본값 설정과 10진수 변환
+  const page = parseInt(req.query.page) || 1;  // <-- 기본값 설정과 10진수 변환
+  const limit = parseInt(req.query.limit) || 30;  // <-- 기본값 설정과 10진수 변환
 
   try {
     const { products, totalProducts, totalPages } = await productService.getAllProducts(page, limit);
@@ -90,27 +90,6 @@ productRouter.get('/', async (req, res, next) => {
     next(error);
   }
 });
-
-// 모든 제품 조회 (페이지네이션 추가)
-/*productRouter.get('/', async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-
-  try {
-    const { products, totalProducts, totalPages } = await productService.getAllProducts(page, limit);
-    res.status(200).json({
-      products,
-      pageInfo: {
-        currentPage: page,
-        totalPages,
-        totalProducts,
-      },
-    });
-  } catch (error) {
-    next(error);
-    //res.status(500).json({ error: error.message });-----오류나면 수정
-  }
-});*/
 
 // 특정 제품 조회
 productRouter.get('/:pid', async (req, res, next) => {
