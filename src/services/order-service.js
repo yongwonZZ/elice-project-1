@@ -81,7 +81,7 @@ class OrderService {
   async getOrderLists(page, limit) {
     try {
       const skip = (page - 1) * limit;
-      const orders = await this.orderModel.findAll().skip(skip).limit(limit);
+      const orders = await this.orderModel.findAll({ skip, limit });
       const totalOrders = await this.orderModel.countOrders({});
       return {
         orders,

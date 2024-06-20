@@ -61,9 +61,9 @@ orderRouter.patch('/:oid', loginRequired, async (req, res, next) => {
 });
 
 // 주문 삭제
-orderRouter.delete('/', loginRequired, async (req, res, next) => {
+orderRouter.delete('/:oid', loginRequired, async (req, res, next) => {
   try {
-    const orderId = req.query.oid;
+    const orderId = req.params.oid;
     const deletedOrderInfo = await orderService.deleteOrder(orderId);
     res.status(200).json({ message: '주문 삭제 성공', data: deletedOrderInfo });
   } catch (error) {
@@ -94,7 +94,7 @@ orderRouter.get('/:uid', loginRequired, async (req, res, next) => {
 });
 
 // 관리자 상품 전체 조회 (페이지네이션 적용)
-orderRouter.get('/admin', adminRequired, async (req, res, next) => {
+orderRouter.get('/admin/:uid', adminRequired, async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
