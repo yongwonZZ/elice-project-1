@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 mongoose.set('strictQuery', true);
-mongoose.connect(MONGODB_URL);
+mongoose.connect(DB_URL);
 const db = mongoose.connection;
 
 db.on('connected', () =>
