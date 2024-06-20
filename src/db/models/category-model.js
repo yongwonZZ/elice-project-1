@@ -34,7 +34,9 @@ class CategoryModel {
     const filter = { _id: categoryId }; // 수정할 카테고리를 찾는 필터
     const option = { returnOriginal: false }; // 수정된 문서를 반환
 
-    const updatedCategory = await Category.findOneAndUpdate(filter, update, option); // 카테고리를 수정합니다.
+    const updatedCategory = await Category.findOneAndUpdate(
+      filter, update, option
+    ); // 카테고리를 수정합니다.
     return updatedCategory;
   }
 
@@ -45,22 +47,43 @@ class CategoryModel {
       throw new Error('Category not found');
     }
 
+    if (!Types.ObjectId.isValid(productId)) {
+      throw new Error('Invalid product ID');
+    }
+
+    if (category.products.includes(productId)) {
+      throw new Error('Product already exists in category');
+    }
+
+
     category.products.push(productId); // 카테고리에 제품 ID를 추가
     await category.save(); // 변경 사항 저장
 
-    return category;
+    // 카테고리와 함께 제품 정보를 반환
+    const populatedCategory = await Category.findById(categoryId).populate(
+      'products'
+    );
+
+    return populatedCategory;
   }
 
   // 카테고리에서 제품 삭제
   async removeProduct(categoryId, productId) {
-    const category = await Category.findById(categoryId);
+    const category = await Category.findById(categoryId);//.populate('products');----오류나면 수정
     if (!category) {
       throw new Error('Category not found');
     }
 
-    category.products = category.products.filter(p => p.toString() !== productId); // 카테고리에서 제품 ID를 제거합니다.
+    category.products = category.products.filter(
+      p => p.toString() !== productId
+    ); // 카테고리에서 제품 ID를 제거합니다.
     await category.save(); // 변경 사항을 저장
+    // 카테고리와 함께 제품 정보를 반환--------오류나면 수정
+    //const populatedCategory = await Category.findById(categoryId).populate(
+    //  'products'
+    //);
 
+    //return populatedCategory;
     return category;
   }
 }

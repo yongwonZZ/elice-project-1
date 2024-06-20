@@ -14,7 +14,7 @@ categoryRouter.get('/', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}); //-------------------'/categories'엔드포인트 정의 어디서 하는건지?
+}); 
 
 // ID로 카테고리 조회 (일반 사용자도 가능)
 categoryRouter.get('/:id', async (req, res, next) => {
@@ -61,7 +61,7 @@ categoryRouter.put(
 
 // 카테고리 삭제 (관리자 전용)
 categoryRouter.delete(
-  '/:id',
+  '/:id/delete',
   loginRequired,
   adminRequired,
   async (req, res, next) => {

@@ -3,13 +3,30 @@ import { ProductSchema } from '../schemas/product-schema.js';
 
 const Product = model('Product', ProductSchema);
 
+
+class ProductModel {
+  async findAll({ skip = 0, limit = 10 } = {}) {
+    const products = await Product.find({}).skip(skip).limit(limit).exec();
+    return products;
+  }
+
+  async countProducts(filter = {}) {
+    const countedProducts = await Product.countDocuments(filter);
+    return countedProducts;
+  }
+/*
 // ProductModel 클래스 정의
 class ProductModel {
   // 전체 제품 조회
+  async findAll({ skip = 0, limit = 10 } = {}) {
+    const products = await Product.find({}).skip(skip).limit(limit).exec();
+    return products;
+  }
+  /*
   async findAll() {
     const products = await Product.find({}); // 모든 제품을 조회
     return products;
-  }
+  }*/
 
   // ID로 제품 조회
   async findById(productId) {

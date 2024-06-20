@@ -3,9 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Product Joi 스키마
 const productSchema = Joi.object({
-  id: Joi.string()
-    .default(() => uuidv4())
-    .required(),
+  id: Joi.string().default(() => uuidv4()).required(),
   name: Joi.string().required(),
   price: Joi.number().required(),
   description: Joi.string().required(),

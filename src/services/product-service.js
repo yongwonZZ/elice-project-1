@@ -5,26 +5,50 @@
       this.productModel = productModel;
     }
   
-    async getAllProducts() {
+
+    async getAllProducts(page, limit) {
       try {
-        const products = await this.productModel.findAll();
-        return products;
+        const skip = (page - 1) * limit;
+        const products = await this.productModel.findAll({ skip, limit });  // <-- 수정된 부분
+        const totalProducts = await this.productModel.countProducts({});
+        return {
+          products,
+          totalProducts,
+          totalPages: Math.ceil(totalProducts / limit),
+        };
       } catch (error) {
         throw new Error('제품을 조회하는 도중 오류가 발생했습니다.');
       }
     }
   
-    async getProductById(productId) {
+
+   /* async getAllProducts(page, limit) {
       try {
-        const product = await this.productModel.findById(productId);
-        if (!product) {
-          throw new Error('제품을 찾을 수 없습니다.');
-        }
-        return product;
+        const skip = (page - 1) * limit;
+        const products = await this.productModel.find({}).skip(skip).limit(limit);
+        const totalProducts = await this.productModel.countDocuments();
+        return {
+          products,
+          totalProducts,
+          totalPages: Math.ceil(totalProducts / limit),
+        };
       } catch (error) {
         throw new Error('제품을 조회하는 도중 오류가 발생했습니다.');
       }
+    }*/
+  
+async getProductById(productId) {
+  try {
+    const product = await this.productModel.findById(productId);
+    if (!product) {
+      throw new Error('제품을 찾을 수 없습니다.');
     }
+    return product;
+  } catch (error) {
+    throw new Error('제품을 조회하는 도중 오류가 발생했습니다.');
+  }
+}
+    
   
     async createProduct(productData) {
       try {
