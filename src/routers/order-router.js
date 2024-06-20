@@ -61,9 +61,9 @@ orderRouter.patch('/:oid', loginRequired, async (req, res, next) => {
 });
 
 // 주문 삭제
-orderRouter.delete('/', loginRequired, async (req, res, next) => {
+orderRouter.delete('/:oid', loginRequired, async (req, res, next) => {
   try {
-    const orderId = req.query.oid;
+    const orderId = req.params.oid;
     const deletedOrderInfo = await orderService.deleteOrder(orderId);
     res.status(200).json({ message: '주문 삭제 성공', data: deletedOrderInfo });
   } catch (error) {
@@ -78,9 +78,6 @@ orderRouter.get('/:uid', loginRequired, async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 
-    console.log(
-      `Fetching orders for user ${userId}, page: ${page}, limit: ${limit}`
-    );
     const orderListByUserId = await orderService.getOrderListByUserId(
       userId,
       page,
@@ -93,17 +90,41 @@ orderRouter.get('/:uid', loginRequired, async (req, res, next) => {
   }
 });
 
-// 관리자 상품 전체 조회 (페이지네이션 적용)
-orderRouter.get('/admin', adminRequired, async (req, res, next) => {
+// 특정 주문 상세 조회
+orderRouter.get('/:uid/:oid', loginRequired, async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const orderLists = await orderService.getOrderLists(page, limit);
-    res.status(200).json(orderLists);
+    const userId = req.params.uid;
+    const orderId = req.params.oid;
+
+    const orderById = await orderService.getOrderById(orderId);
+    if (orderById.userId.toString() !== userId) {
+      return res.status(403).json({
+        message: 'Access forbidden: Order does not belong to this user',
+      });
+    }
+
+    res.status(200).json(orderById);
   } catch (error) {
     next(error);
   }
 });
+
+// 관리자 상품 전체 조회 (페이지네이션 적용)
+orderRouter.get(
+  '/admin/:uid',
+  loginRequired,
+  adminRequired,
+  async (req, res, next) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const orderLists = await orderService.getOrderLists(page, limit);
+      res.status(200).json(orderLists);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // 관리자의 주문 상태 변경 기능
 orderRouter.patch('/admin/:oid', adminRequired, async (req, res, next) => {

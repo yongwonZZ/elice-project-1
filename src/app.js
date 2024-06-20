@@ -10,6 +10,14 @@ import {
 import { errorHandler } from './middlewares/index.js';
 import morgan from 'morgan';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// 현재 모듈의 디렉토리 경로를 가져오는 함수
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
 
 // CORS 에러 방지
@@ -24,6 +32,31 @@ app.use(express.json());
 // Content-Type: application/x-www-form-urlencoded 형태의 데이터를 인식하고 핸들링할 수 있게 함.
 app.use(express.urlencoded({ extended: false }));
 
+// // Static files
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", (req, res) => {
+ res.redirect('/main')
+});
+
+// // Routes
+app.get("/main", (req, res) => {
+//   // ---- 이후 public 디렉토리 하위 각 폴더별로 라우터 변경
+  res.sendFile(path.join(__dirname, "public/main", "main.html")); // 브랜치 병합 이후 여러분들 폴더를 public폴더로 옮겨야함
+});
+
+// // *********** User Page 관련 ***************
+app.get("/signup", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/Sign", "signup.html"));
+});
+app.get("/signin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/Sign", "signin.html"));
+});
+app.get("/mypage", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/myPage", "myPage.html"));
+});
+
+//back
 app.get('/api', (req, res) => {
   res.send('API RUNNING...');
 });

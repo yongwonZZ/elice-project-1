@@ -61,7 +61,20 @@ class OrderService {
     }
   }
 
-  // 주문 조회 (주문이 없으면 빈 배열 반환)
+  //주문 조회
+  async getOrderById(orderId) {
+    try {
+      const order = await this.orderModel.findById(orderId);
+      if (!order) {
+        throw new Error('해당 주문을 찾을 수 없습니다.');
+      }
+      return order;
+    } catch (error) {
+      throw new Error(`주문 조회 중 오류가 발생했습니다: ${error.message}`);
+    }
+  }
+
+  // 주문 리스트 조회 (주문이 없으면 빈 배열 반환)
   async getOrderListByUserId(userId, page, limit) {
     try {
       const skip = (page - 1) * limit;
@@ -77,11 +90,11 @@ class OrderService {
     }
   }
 
-  // 관리자 주문 조회 (주문이 없으면 빈 배열 반환)
+  // 관리자 주문 리스트 조회 (주문이 없으면 빈 배열 반환)
   async getOrderLists(page, limit) {
     try {
       const skip = (page - 1) * limit;
-      const orders = await this.orderModel.findAll().skip(skip).limit(limit);
+      const orders = await this.orderModel.findAll({ skip, limit });
       const totalOrders = await this.orderModel.countOrders({});
       return {
         orders,

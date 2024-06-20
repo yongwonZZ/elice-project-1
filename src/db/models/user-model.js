@@ -23,9 +23,16 @@ export class UserModel {
   }
 
   // 모든 사용자 찾기
-  async findAll() {
-    const users = await User.find({});
+  async findAll({ page = 1, limit = 10 } = {}) {
+    const skip = (page - 1) * limit;
+    const users = await User.find().skip(skip).limit(limit);
     return users;
+  }
+
+  // 사용자 수 세기
+  async countDocuments() {
+    const count = await User.countDocuments();
+    return count;
   }
 
   // 해당 사용자 업데이트 하기
@@ -35,6 +42,15 @@ export class UserModel {
 
     const updatedUser = await User.findOneAndUpdate(filter, update, option);
     return updatedUser;
+  }
+
+  // 사용자 삭제
+  async deleteUser(userId) {
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      throw new Error('해당 ID의 사용자를 찾을 수 없습니다.');
+    }
+    return deletedUser;
   }
 }
 

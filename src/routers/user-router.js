@@ -62,11 +62,13 @@ userRouter.post('/login', async (req, res, next) => {
 // 미들웨어로 loginRequired를 사용하여 jwt 토큰이 없으면 사용 불가한 라우팅임
 userRouter.get('/userlist', loginRequired, async (req, res, next) => {
   try {
-    const perPage = 10; // 페이지당 사용자 수
+    const perPage = parseInt(req.query.limit) || 10; // 페이지당 사용자 수
     const page = parseInt(req.query.page) || 1; // 요청된 페이지 번호를 가져옴 기본값 1
 
     // 페이지와 페이지당 사용자 수에 맞게 사용자 목록 가져옴
-    const totalPages = Math.ceil(totalUsersCount / perPage); 
+    const users = await userService.getUsers({ page, perPage });
+    const totalUsersCount = await userService.countUsers(); // 전체 사용자 수 가져오기
+    const totalPages = Math.ceil(totalUsersCount / perPage);
 
     // 현재 페이지의 사용자 목록과 함께 반환
     res.status(200).json({
@@ -116,11 +118,11 @@ userRouter.patch('/me', loginRequired, async (req, res, next) => {
 });
 
 // 사용자 정보 삭제(탈퇴) API
-userRouter.delete('/me', loginRequired, async (req, res, next) => {
+userRouter.delete('/me/:userId', loginRequired, async (req, res, next) => {
   try {
     const userId = req.currentUserId;
     await userService.deleteUser(userId);
-    res.status(204).send();
+    res.status(200).json({ message: 'User successfully deleted' });
   } catch (error) {
     next(error);
   }
