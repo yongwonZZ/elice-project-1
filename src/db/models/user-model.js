@@ -1,35 +1,56 @@
-import { model } from "mongoose";
-import { UserSchema } from "../schemas/user-schema";
+import { model } from 'mongoose';
+import { UserSchema } from '../schemas/user-schema.js';
 
-const User = model("users", UserSchema);
+const User = model('users', UserSchema); // model함수(스키마이름(복수), 스키마객체)
 
 export class UserModel {
+  // 이메일로 사용자 찾기
   async findByEmail(email) {
     const user = await User.findOne({ email });
     return user;
   }
 
+  // 아이디로 사용자 찾기
   async findById(userId) {
     const user = await User.findOne({ _id: userId });
     return user;
   }
 
+  // 새로운 사용자 만들기
   async create(userInfo) {
     const createdNewUser = await User.create(userInfo);
     return createdNewUser;
   }
 
-  async findAll() {
-    const users = await User.find({});
+  // 모든 사용자 찾기
+  async findAll({ page = 1, limit = 10 } = {}) {
+    const skip = (page - 1) * limit;
+    const users = await User.find().skip(skip).limit(limit);
     return users;
   }
 
+  // 사용자 수 세기
+  async countDocuments() {
+    const count = await User.countDocuments();
+    return count;
+  }
+
+  // 해당 사용자 업데이트 하기
   async update({ userId, update }) {
     const filter = { _id: userId };
     const option = { returnOriginal: false };
 
     const updatedUser = await User.findOneAndUpdate(filter, update, option);
     return updatedUser;
+  }
+
+  // 사용자 삭제
+  async deleteUser(userId) {
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      throw new Error('해당 ID의 사용자를 찾을 수 없습니다.');
+    }
+    return deletedUser;
   }
 }
 

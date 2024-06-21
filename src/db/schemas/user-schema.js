@@ -19,22 +19,14 @@ const UserSchema = new Schema(
       required: false,
     },
     address: {
-      type: new Schema(
-        {
-          postalCode: String,
-          address1: String,
-          address2: String,
-        },
-        {
-          _id: false,
-        }
-      ),
+      type: String,
       required: false,
     },
     role: {
       type: String,
+      enum: ["user", "admin"], // 관리자랑 구별 짓기 위함
       required: false,
-      default: "basic-user",
+      default: "user",
     },
   },
   {
