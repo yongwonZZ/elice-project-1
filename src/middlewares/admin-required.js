@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'; // 토큰용 라이브러리
 
-function loginRequired(req, res, next) {
+function adminRequired(req, res, next) {
   // request 헤더로부터 authorization bearer 토큰을 받음.
   const userToken = req.headers['authorization']?.split(' ')[1];
 
@@ -21,10 +21,18 @@ function loginRequired(req, res, next) {
     const secretKey = process.env.JWT_SECRET_KEY || 'secret-key';
     const jwtDecoded = jwt.verify(userToken, secretKey);
 
-    const userId = jwtDecoded.userId;
+    const { userId, role } = jwtDecoded;
 
     // 라우터에서 req.currentUserId를 통해 유저의 id에 접근 가능하게 됨
     req.currentUserId = userId;
+    if (role !== 'admin') {
+      res.status(403).json({
+        result: 'forbidden-approach',
+        reason: '어드민만 접근할 수 있습니다.',
+      });
+
+      return;
+    }
 
     next();
   } catch (error) {
@@ -39,4 +47,4 @@ function loginRequired(req, res, next) {
   }
 }
 
-export { loginRequired };
+export { adminRequired };
